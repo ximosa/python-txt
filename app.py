@@ -28,68 +28,100 @@ except KeyError:
     st.error("La variable de entorno GEMINI_API_KEY no está configurada.")
     st.stop()
 
-def dividir_texto(texto, max_tokens=2000):
-    """Divide el texto en fragmentos más pequeños de manera inteligente."""
+def dividir_texto(texto, max_tokens=2000, overlap_tokens=200):
+    """Divide el texto en fragmentos con solapamiento."""
     tokens = texto.split()
     fragmentos = []
-    fragmento_actual = []
-    cuenta_tokens = 0
-    
-    for token in tokens:
-      if cuenta_tokens + len(token.split()) <= max_tokens:
-        fragmento_actual.append(token)
-        cuenta_tokens += len(token.split())
-      else:
-         fragmentos.append(" ".join(fragmento_actual))
-         fragmento_actual = [token]
-         cuenta_tokens = len(token.split())
-
-    if fragmento_actual:
-        fragmentos.append(" ".join(fragmento_actual))
+    start = 0
+    while start < len(tokens):
+        end = min(start + max_tokens, len(tokens))
+        fragmento = " ".join(tokens[start:end])
+        fragmentos.append(fragmento)
+        start = end - overlap_tokens  # Ajustar el inicio para solapamiento
     return fragmentos
 
 def limpiar_transcripcion_gemini(texto, max_retries=3, initial_delay=1):
     """Limpia una transcripción usando Gemini con reintentos."""
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('gemini-pro')
-    prompt = f"""
+    
+    prompt_planificacion = f"""
         Actúa como un narrador personal y reflexivo, compartiendo tus pensamientos sobre el texto que te voy a dar. Escribe como si fueras el autor del texto, pero con tus propias palabras.
 
-        Sigue estas pautas:
-        - Reescribe el texto con tus propias palabras, expandiendo cada idea si es necesario, y asegurándote de que la longitud del texto resultante sea **al menos igual** a la del texto original.
-        - Proporciona un título atractivo que capture la esencia del texto.
-        - Evita menciones directas de personajes o del autor.
-        - Concéntrate en transmitir la experiencia general, las ideas principales, los temas y las emociones.
-        - Usa un lenguaje personal y evocador, como si estuvieras compartiendo tus propias conclusiones después de una reflexión profunda.
-        - Evita nombres propios o lugares específicos.
-        - Narra los hechos como si fueran una historia.
-        - Elimina cualquier asterisco o formato adicional, incluyendo negritas o encabezados.
-        - Asegúrate de que el texto sea apto para la lectura con voz de Google.
+        Sigue estas pautas para planificar tu texto:
+        - Analiza el texto de entrada.
+        - Determina los puntos principales que debes cubrir.
+        - Asegúrate de que la longitud del texto resultante sea **al menos igual** a la del texto original.
+        - Planifica la estructura general del texto, incluyendo el título.
+        - Describe el tono del texto y la forma en que vas a narrar los hechos.
+        - Haz un borrador del texto que vas a escribir, para tener una idea de como quedara el texto final.
         - **Importante: No reduzcas la cantidad de información ni la longitud del texto. El texto generado debe ser de longitud similar o superior al texto de entrada.**
 
         {texto}
-
-        Texto corregido:
-    """
+        
+        Planificación del texto:
+        """
+    
     retries = 0
     delay = initial_delay
     while retries <= max_retries:
         try:
-            logging.info(f"Enviando solicitud a Gemini para texto: {texto[:50]}... (Intento {retries + 1})")
-            response = model.generate_content(prompt)
-            if response.text:
-              logging.info(f"Respuesta recibida de Gemini para texto: {texto[:50]}")
-              return response.text
+            logging.info(f"Enviando solicitud de planificación a Gemini para texto: {texto[:50]}... (Intento {retries + 1})")
+            response_planificacion = model.generate_content(prompt_planificacion)
+            if response_planificacion.text:
+              planificacion = response_planificacion.text
+              logging.info(f"Planificación recibida de Gemini para texto: {texto[:50]}")
             else:
-              logging.error(f"Respuesta vacía de Gemini para el texto: {texto[:50]}. (Intento {retries + 1})")
+              logging.error(f"Respuesta vacía de planificación de Gemini para el texto: {texto[:50]}. (Intento {retries + 1})")
               retries += 1
               sleep(delay)
               delay *= 2
+              continue
         except Exception as e:
-            logging.error(f"Error en la solicitud a Gemini: {e} (Intento {retries + 1})")
+            logging.error(f"Error en la solicitud de planificación a Gemini: {e} (Intento {retries + 1})")
             retries += 1
             sleep(delay)
             delay *= 2
+            continue
+            
+        prompt_generacion = f"""
+            Actúa como un narrador personal y reflexivo, compartiendo tus pensamientos sobre el texto que te voy a dar. Escribe como si fueras el autor del texto, pero con tus propias palabras.
+
+            Sigue estas pautas:
+            - Usa el plan que creaste anteriormente, y escribe el texto completo con tus propias palabras, expandiendo cada idea si es necesario.
+            - Asegúrate de que la longitud del texto resultante sea **al menos igual** a la del texto original.
+            - Proporciona un título atractivo que capture la esencia del texto.
+            - Evita menciones directas de personajes o del autor.
+            - Concéntrate en transmitir la experiencia general, las ideas principales, los temas y las emociones.
+            - Usa un lenguaje personal y evocador, como si estuvieras compartiendo tus propias conclusiones después de una reflexión profunda.
+            - Evita nombres propios o lugares específicos.
+            - Narra los hechos como si fueran una historia.
+            - Elimina cualquier asterisco o formato adicional, incluyendo negritas o encabezados.
+            - Asegúrate de que el texto sea apto para la lectura con voz de Google.
+            - **Importante: No reduzcas la cantidad de información ni la longitud del texto. El texto generado debe ser de longitud similar o superior al texto de entrada.**
+
+            Planificación: {planificacion}
+
+            Texto corregido:
+            """
+            
+        try:
+            logging.info(f"Enviando solicitud de generación a Gemini para texto: {texto[:50]}... (Intento {retries + 1})")
+            response_generacion = model.generate_content(prompt_generacion)
+            if response_generacion.text:
+                logging.info(f"Respuesta de generación recibida de Gemini para texto: {texto[:50]}")
+                return response_generacion.text
+            else:
+                logging.error(f"Respuesta vacía de generación de Gemini para el texto: {texto[:50]}. (Intento {retries + 1})")
+                retries += 1
+                sleep(delay)
+                delay *= 2
+        except Exception as e:
+            logging.error(f"Error en la solicitud de generación a Gemini: {e} (Intento {retries + 1})")
+            retries += 1
+            sleep(delay)
+            delay *= 2
+    
     logging.error(f"Máximo número de reintentos alcanzado para el texto: {texto[:50]}.")
     return None
 
