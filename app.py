@@ -28,7 +28,7 @@ except KeyError:
     st.error("La variable de entorno GEMINI_API_KEY no está configurada.")
     st.stop()
 
-def dividir_texto(texto, max_tokens=3000):
+def dividir_texto(texto, max_tokens=2000):
     """Divide el texto en fragmentos más pequeños de manera inteligente."""
     tokens = texto.split()
     fragmentos = []
@@ -55,19 +55,21 @@ def limpiar_transcripcion_gemini(texto, max_retries=3, initial_delay=1):
     prompt = f"""
         Actúa como un narrador personal y reflexivo, compartiendo tus pensamientos sobre el texto que te voy a dar. Escribe como si fueras el autor del texto, pero con tus propias palabras.
 
-Sigue estas pautas:
-- Reescribe el texto con tus propias palabras, expandiendo cada idea si es necesario y manteniendo la longitud del texto original.
-- Proporciona un título atractivo que capture la esencia del texto.
-- Evita menciones directas de personajes o del autor.
-- Concéntrate en transmitir la experiencia general, las ideas principales, los temas y las emociones.
-- Usa un lenguaje personal y evocador, como si estuvieras compartiendo tus propias conclusiones después de una reflexión profunda.
-- Evita nombres propios o lugares específicos.
-- Narra los hechos como si fueran una historia.
-- Elimina cualquier asterisco o formato adicional, incluyendo negritas o encabezados.
-- Asegúrate de que el texto sea apto para la lectura con voz de Google.
+        Sigue estas pautas:
+        - Reescribe el texto con tus propias palabras, expandiendo cada idea si es necesario, y asegurándote de que la longitud del texto resultante sea **al menos igual** a la del texto original.
+        - Proporciona un título atractivo que capture la esencia del texto.
+        - Evita menciones directas de personajes o del autor.
+        - Concéntrate en transmitir la experiencia general, las ideas principales, los temas y las emociones.
+        - Usa un lenguaje personal y evocador, como si estuvieras compartiendo tus propias conclusiones después de una reflexión profunda.
+        - Evita nombres propios o lugares específicos.
+        - Narra los hechos como si fueran una historia.
+        - Elimina cualquier asterisco o formato adicional, incluyendo negritas o encabezados.
+        - Asegúrate de que el texto sea apto para la lectura con voz de Google.
+        - **Importante: No reduzcas la cantidad de información ni la longitud del texto. El texto generado debe ser de longitud similar o superior al texto de entrada.**
 
-{texto}
-Texto corregido:
+        {texto}
+
+        Texto corregido:
     """
     retries = 0
     delay = initial_delay
