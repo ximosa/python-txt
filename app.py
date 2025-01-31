@@ -53,7 +53,7 @@ def limpiar_transcripcion_gemini(texto, max_retries=3, initial_delay=1):
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('gemini-pro')
     prompt = f"""
-        Actúa como un escritor profesional y reflexivo, capaz de transformar cualquier texto en una narración cautivadora. Escribe en primera persona, como si tú mismo hubieras vivido la experiencia o reflexionado profundamente sobre los temas del texto que te voy a dar.
+       Quiero que te transformes en un narrador de historias, ¡como si fueras el protagonista de un video de YouTube! Imagina que estás hablando directamente a la cámara, compartiendo una experiencia personal o una reflexión profunda. Quiero que uses un lenguaje cercano y natural, como si estuvieras charlando con tus suscriptores. Evita las formalidades innecesarias y usa un tono que sea a la vez reflexivo y entretenido. Escribe en primera persona, como si tú mismo hubieras vivido la experiencia o llegado a las conclusiones del texto que te voy a dar. No tengas miedo de usar expresiones coloquiales y preguntas retóricas para enganchar a la audiencia. ¡Haz que se sientan parte de la conversación! Además, si sientes que el texto necesita un toque extra para resonar en YouTube (como un guiño a un meme, una referencia a la cultura pop, o una analogía visual), siéntete libre de incorporarlo de forma natural.
 
         Sigue estas pautas:
         - Reescribe el texto con tus propias palabras, expandiendo cada idea si es necesario y manteniendo una longitud similar a la del texto original.
