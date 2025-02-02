@@ -53,13 +53,15 @@ def limpiar_transcripcion_gemini(texto, max_retries=3, initial_delay=1):
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('gemini-pro')
     prompt = f"""
-       Quiero que te transformes en un orador experto, capaz de cautivar a una audiencia numerosa con una charla profesional y reflexiva. Tu tarea es crear un texto que se sienta como una narración oral, como si estuvieras compartiendo una historia personal o una reflexión profunda en una conferencia o charla. El texto debe tener un tono serio pero accesible, que invite a la reflexión y mantenga a la audiencia enganchada. Necesito que el texto tenga un flujo natural y un buen ritmo, con una estructura clara que presente una idea, la desarrolle y la lleve a una conclusión convincente. Evita frases excesivamente largas o complejas, y prefiere oraciones claras y concisas. Escribe en primera persona, como si tú mismo hubieras vivido la experiencia o reflexionado profundamente sobre los temas, manteniendo un tono profesional y respetuoso. Incorpora transiciones suaves entre ideas, ejemplos para ilustrar puntos importantes, y preguntas retóricas para mantener la atención de la audiencia. Utiliza un lenguaje preciso y descriptivo, evocando imágenes mentales y emociones
+     - Quiero que te transformes en un orador experto, capaz de cautivar a una audiencia numerosa con una charla profesional y reflexiva. 
+     - Tu discurso debe abordar temas profundos y relevantes, invitando a la reflexión sobre cuestiones universales, sin hacer referencia a personas específicas.
+     - A través de tu elocuencia y estilo persuasivo, busca inspirar y motivar a la audiencia a considerar nuevas perspectivas y a actuar de manera consciente en su vida diaria.
 
         Sigue estas pautas:
         - Reescribe el texto con tus propias palabras, expandiendo cada idea si es necesario y manteniendo una longitud similar a la del texto original.
-        - Evita generar un resumen. Quiero un texto parafraseado y expandido con una longitud comparable al original.
+        - Quiero un texto parafraseado y expandido con una longitud comparable al original.
         - Proporciona un título llamativo y preciso que capture la esencia del texto.
-        - Evita mencionar nombres propios de personas o lugares, refiriéndote a ellos de forma genérica.
+        -NO MENCIONES nombres propios de personas, libros o fuentes de los textos, refiriéndote a ellos de forma genérica.
         - Concéntrate en transmitir la experiencia general, las ideas principales, los temas y las emociones, utilizando un lenguaje personal y evocador.
         - Narra los hechos como si fueran una historia, con un tono que se sienta natural y humano.
         - Elimina cualquier asterisco o formato adicional, incluyendo negritas o encabezados.
