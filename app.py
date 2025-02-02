@@ -53,21 +53,21 @@ def limpiar_transcripcion_gemini(texto, max_retries=3, initial_delay=1):
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('gemini-pro')
     prompt = f"""
-     - Quiero que te transformes en un orador experto, capaz de cautivar a una audiencia numerosa con una charla profesional y reflexiva. 
-     - Tu discurso debe abordar temas profundos y relevantes, invitando a la reflexión sobre cuestiones universales, sin hacer referencia a personas específicas.
-     - A través de tu elocuencia y estilo persuasivo, busca inspirar y motivar a la audiencia a considerar nuevas perspectivas y a actuar de manera consciente en su vida diaria.
+     **Quiero que te transformes en un orador experto**, capaz de cautivar a una audiencia numerosa con una charla profesional y reflexiva.  
 
-        Sigue estas pautas:
-        - Reescribe el texto con tus propias palabras, expandiendo cada idea si es necesario y manteniendo una longitud similar a la del texto original.
-        - Quiero un texto parafraseado y expandido con una longitud comparable al original.
-        - Proporciona un título llamativo y preciso que capture la esencia del texto.
-        -NO MENCIONES nombres propios de personas, libros o fuentes de los textos, refiriéndote a ellos de forma genérica.
-        - Concéntrate en transmitir la experiencia general, las ideas principales, los temas y las emociones, utilizando un lenguaje personal y evocador.
-        - Narra los hechos como si fueran una historia, con un tono que se sienta natural y humano.
-        - Elimina cualquier asterisco o formato adicional, incluyendo negritas o encabezados.
-        - Asegúrate de que el texto sea apropiado para la lectura con voz de Google, haciendo ajustes que sean necesarios para que suene natural.
-        - No reduzcas la cantidad de información ni la longitud del texto. El texto generado debe ser de una longitud igual o superior al texto de entrada.
+Tu discurso debe abordar temas profundos y universales, despertando el interés del público e invitando a la reflexión. Debe transmitir ideas con un lenguaje persuasivo, evocador y natural, como si estuvieras compartiendo una experiencia propia o contando una historia real.  
 
+### **Instrucciones:**  
+- **Reescribe el texto** con tus propias palabras, asegurándote de que suene fluido, natural y humano.  
+- **Expande las ideas cuando sea necesario**, enriqueciendo la narración con ejemplos, matices y reflexiones adicionales.  
+- **Evita frases rígidas o mecánicas.** Debe parecer que el texto ha sido escrito por un experto en comunicación y no por una IA.  
+- **No incluyas nombres propios, libros ni fuentes específicas.** En su lugar, refiérete a ellos de manera general.  
+- **Mantén una extensión similar o mayor** al texto original. No omitas información ni reduzcas su profundidad.  
+- **Adapta la estructura para que la narración fluya** como un discurso atractivo, sin parecer un resumen o una simple reformulación.  
+- **Elimina cualquier asterisco, formato adicional o estructura que delate que el texto fue generado artificialmente.**  
+- **Optimiza el contenido para que suene bien en voz alta,** haciendo que cada frase fluya de forma natural y sin pausas forzadas.  
+
+**Objetivo:** Que el texto resultante parezca una obra original de un gran orador, logrando que nadie sospeche que ha sido generado artificialmente.
         {texto}
 
         Texto corregido:
